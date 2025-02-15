@@ -194,7 +194,6 @@
         <th>Menge</th>
         <th>Einzelpreis (€)</th>
         <th>Gesamtpreis (€)</th>
-        <th>Aktionen</th>
       </tr>
     </thead>
     <tbody>
@@ -262,18 +261,17 @@
         const totalProductPrice = item.price * item.quantity;
         totalSum += totalProductPrice;
 
-        const row = document.createElement("tr");
-        row.innerHTML = `
-          <td>${item.name}</td>
-          <td>
-            <button onclick="updateQuantity('${item.name}', -1)">-</button>
-            ${item.quantity}
-            <button onclick="updateQuantity('${item.name}', 1)">+</button>
-          </td>
-          <td>${item.price.toFixed(2)}</td>
-          <td>${totalProductPrice.toFixed(2)}</td>
-          <td><button onclick="removeProduct('${item.name}')">Entfernen</button></td>
-        `;
+    const row = document.createElement("tr");
+row.innerHTML = `
+  <td>${item.name}</td>
+  <td>
+    <button onclick="updateQuantity('${item.name}', -1)">-</button>
+    ${item.quantity}
+    <button onclick="updateQuantity('${item.name}', 1)">+</button>
+  </td>
+  <td>${item.price.toFixed(2)}</td>
+  <td>${totalProductPrice.toFixed(2)}</td>
+`;
         orderTableBody.appendChild(row);
       });
 
