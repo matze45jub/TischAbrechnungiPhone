@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>JBO feiert mit Freunden</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+ 
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f4;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #101A4B;
+      color: white;
+      padding: 15px;
+    }
+
+    .header img {
+      width: 50px;
+      height: auto;
+      margin-right: 10px;
+    }
+
+    .header-text h1 {
+      font-size: 20px;
+      margin: 0;
+      text-align: center;
+    }
+
+    .category-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin: 10px 0;
+      color: #101A4B;
+    }
+
+    .product-buttons-container {
+      margin: 10px;
+    }
+
+    .product-buttons-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .product-button {
+      padding: 12px 25px;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 120px;
+      margin: 5px;
+    }
+
+    .essen-button {
+      background-color: #E74C3C;
+      color: #FFFFFF;
+    }
+
+    .getraenke-button {
+      background-color: #377EBF;
+      color: #FFFFFF;
+    }
+
+    #orderTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 15px 0;
+    }
+
+    #orderTable th, #orderTable td {
+      padding: 12px;
+      border: 1px solid #ccc;
+      text-align: center;
+    }
+
+    #orderTable th {
+      background-color: #f8f8f8;
+    }
+
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      align-items: center;
+      margin-top: 20px;
+    }
+
+    .button-container button {
+      padding: 12px 25px;
+      font-size: 16px;
+      background-color: #E74C3C;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 80%;
+    }
+
+    .button-container button:hover {
+      background-color: #C0392B;
+    }
+
+    .quantity-input {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 80px;
+    }
+
+    .quantity-input button {
+      background-color: #f0f0f0;
+      border: 1px solid #ccc;
+      padding: 5px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    .quantity-input input {
+      width: 40px;
+      text-align: center;
+      border: 1px solid #ccc;
+      padding: 5px;
+      font-size: 14px;
+    }
+
+    /* Responsiveness */
+    @media (max-width: 600px) {
+      .product-button {
+        font-size: 14px;
+        padding: 10px 20px;
+        width: 100px;
+      }
+
+      .header-text h1 {
+        font-size: 18px;
+      }
+
+      .button-container button {
+        font-size: 14px;
+        width: 90%;
+      }
+
+      #orderTable th, #orderTable td {
+        padding: 8px;
+      }
+
+      .quantity-input button {
+        padding: 4px;
+      }
+
+      .quantity-input input {
+        width: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <img src="logo.png" alt="Logo">
+    <h1>45 Jahre Jugendblasorchester Kürnach</h1>
+  </div>
+
+  <div id="productButtons" class="product-buttons-container">
+    <div>
+      <h3 class="category-title"><i class="fas fa-hamburger"></i> Essen</h3>
+      <div class="product-buttons-row" id="essenButtons"></div>
+    </div>
+    <div>
+      <h3 class="category-title"><i class="fas fa-glass-cheers"></i> Getränke</h3>
+      <div class="product-buttons-row" id="getraenkeButtons"></div>
+    </div>
+  </div>
+
+  <h2 style="color: #101A4B;">Bestellung</h2>
+  <table id="orderTable">
+    <thead>
+      <tr>
+        <th>Produkt</th>
+        <th>Menge</th>
+        <th>Einzelpreis (€)</th>
+        <th>Gesamtpreis (€)</th>
+        <th>Aktionen</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <h3>
+    Gesamtsumme (€): <span id="totalSum">0.00</span>€
+  </h3>
+
+  <div class="button-container">
+    <button id="newCustomerBtn" onclick="startNewOrder()">Neuer Kunde</button>
+    <button id="paymentBtn" onclick="handlePayment()">Zahlung</button>
+    <button id="completeOrderBtn" onclick="completeOrder()">Bestellung abschließen</button>
+  </div>
+
+  <script>
+    const products = [
+      { name: "Obatzter", price: 3.2, category: "essen" },
+      { name: "Bratwurst gezwickt", price: 3.5, category: "essen" },
+      { name: "gebackener Camenbert", price: 4.2, category: "essen" },
+      { name: "Pommes", price: 2.5, category: "essen" },
+      { name: "Salat", price: 4.0, category: "essen" },
+      { name: "Bratwurst mit Kraut", price: 8.5, category: "essen" },
+      { name: "Alkoholfreies Bier", price: 3.6, category: "getraenke" },
+      { name: "Bier", price: 4.8, category: "getraenke" },
+      { name: "Alkoholfreies Hefe", price: 3.6, category: "getraenke" },
+      { name: "Hefeweizen", price: 3.8, category: "getraenke" },
+      { name: "Radler", price: 3.6, category: "getraenke" },
+      { name: "Spezi", price: 2.5, category: "getraenke" },
+      { name: "Apfelschorle", price: 2.0, category: "getraenke" },
+      { name: "Cola", price: 3.0, category: "getraenke" },
+      { name: "Fanta", price: 3.0, category: "getraenke" },
+      { name: "Wasser spritzig", price: 2.0, category: "getraenke" },
+      { name: "Wasser still", price: 2.0, category: "getraenke" }
+    ];
+
+    let order = [];
+
+    function startNewOrder() {
+      order = [];
+      renderOrder();
+      document.getElementById("totalSum").textContent = "0.00";
+    }
+
+    function addProductToOrder(name) {
+      const product = products.find(p => p.name === name);
+      if (product) {
+        const existingProduct = order.find(p => p.name === name);
+        if (existingProduct) {
+          existingProduct.quantity += 1;
+        } else {
+          order.push({ ...product, quantity: 1 });
+        }
+        renderOrder();
+      }
+    }
+
+    function renderOrder() {
+      const orderTableBody = document.querySelector("#orderTable tbody");
+      orderTableBody.innerHTML = "";
+      let totalSum = 0;
+
+      order.forEach(item => {
+        const totalProductPrice = item.price * item.quantity;
+        totalSum += totalProductPrice;
+
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>
+            <button onclick="updateQuantity('${item.name}', -1)">-</button>
+            ${item.quantity}
+            <button onclick="updateQuantity('${item.name}', 1)">+</button>
+          </td>
+          <td>${item.price.toFixed(2)}</td>
+          <td>${totalProductPrice.toFixed(2)}</td>
+          <td><button onclick="removeProduct('${item.name}')">Entfernen</button></td>
+        `;
+        orderTableBody.appendChild(row);
+      });
+
+      document.getElementById("totalSum").textContent = totalSum.toFixed(2);
+    }
+
+    function updateQuantity(name, change) {
+      const product = order.find(p => p.name === name);
+      if (product) {
+        product.quantity += change;
+        if (product.quantity <= 0) {
+          removeProduct(name);
+        }
+      }
+      renderOrder();
+    }
+
+    function removeProduct(name) {
+      order = order.filter(p => p.name !== name);
+      renderOrder();
+    }
+
+    function handlePayment() {
+      const totalAmount = parseFloat(document.getElementById("totalSum").textContent);
+      let paymentAmount = prompt(`Betrag zu zahlen: ${totalAmount.toFixed(2)}€\nBitte geben Sie den Zahlbetrag ein:`);
+      paymentAmount = parseFloat(paymentAmount);
+
+      if (isNaN(paymentAmount) || paymentAmount < totalAmount) {
+        alert("Ungültiger Betrag oder nicht ausreichend.");
+      } else {
+        const change = paymentAmount - totalAmount;
+        alert(`Vielen Dank für Ihre Zahlung!\nWechselgeld: ${change.toFixed(2)}€`);
+      }
+    }
+
+    function completeOrder() {
+      alert("Bestellung abgeschlossen!");
+      startNewOrder();
+    }
+
+    function createProductButtons() {
+      const essenButtonsContainer = document.getElementById("essenButtons");
+      const getraenkeButtonsContainer = document.getElementById("getraenkeButtons");
+
+      products.filter(p => p.category === "essen").forEach(product => {
+        const button = document.createElement("button");
+        button.classList.add("product-button", "essen-button");
+        button.textContent = product.name;
+        button.onclick = () => addProductToOrder(product.name);
+        essenButtonsContainer.appendChild(button);
+      });
+
+      products.filter(p => p.category === "getraenke").forEach(product => {
+        const button = document.createElement("button");
+        button.classList.add("product-button", "getraenke-button");
+        button.textContent = product.name;
+        button.onclick = () => addProductToOrder(product.name);
+        getraenkeButtonsContainer.appendChild(button);
+      });
+    }
+
+    createProductButtons();
+  </script>
+</body>
+</html>
