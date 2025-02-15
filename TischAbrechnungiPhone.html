@@ -19,7 +19,7 @@
       align-items: center;
       justify-content: center;
       background-color: #101A4B;
-      height: 30px; /* Höhe verringert */
+      height: 30px;
       color: white;
       padding: 5px;
     }
@@ -55,15 +55,18 @@
       margin-bottom: 20px;
     }
 
-    .product-button {
-      padding: 12px 25px;
-      font-size: 16px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      width: 120px;
-      margin: 5px;
-    }
+  .product-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 25px;
+  font-size: 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 120px;
+  margin: 5px;
+}
 
     .essen-button {
       background-color: #E74C3C;
@@ -145,11 +148,11 @@
         width: 100px;
       }
 
-.header-text h1 {
-  font-size: 4px; /* Reduzierung um die Hälfte */
-  margin: 0;
-  text-align: center;
-}
+      .header-text h1 {
+        font-size: 4px;
+        margin: 0;
+        text-align: center;
+      }
 
       .button-container button {
         font-size: 14px;
@@ -185,12 +188,13 @@
       <h3 class="category-title"><i class="fas fa-glass-cheers"></i> Getränke</h3>
       <div class="product-buttons-row" id="getraenkeButtons"></div>
     </div>
+    <div>
+      <h3 class="category-title"><i class="fas fa-cash-register"></i> Warenkorb</h3>
+      <div class="product-buttons-row" id="warenkorbButtons"></div>
+    </div>    
   </div>
-
     
-   <h3 class="category-title"><i class="<i class="fa-solid fa-money-bills"></i> Bestellung</h3>
-  
-
+    
   <table id="orderTable">
     <thead>
       <tr>
@@ -208,29 +212,29 @@
     Gesamtsumme (€): <span id="totalSum">0.00</span>€
   </h3>
 
-<div class="button-container">
-  <button id="paymentBtn" onclick="handlePayment()">Zahlung</button>
-  <button id="newCustomerBtn" onclick="startNewOrder()">Neuer Kunde</button>
-  <button id="completeOrderBtn" onclick="completeOrder()">Bestellung abschließen</button>
-</div>
+  <div class="button-container">
+    <button id="paymentBtn" onclick="handlePayment()">Zahlung</button>
+    <button id="newCustomerBtn" onclick="startNewOrder()">Neuer Kunde</button>
+    <button id="completeOrderBtn" onclick="completeOrder()">Bestellung abschließen</button>
+  </div>
 
   <script>
     const products = [
+      { name: "Bratwurst, gezwickt", price: 3.5, category: "essen" },
+      { name: "Bratwurst mit Kraut", price: 8.5, category: "essen" },
+      { name: "Camenbert, gebacken", price: 4.2, category: "essen" },       
       { name: "Obatzter", price: 3.2, category: "essen" },
-      { name: "Bratwurst gezwickt", price: 3.5, category: "essen" },
-      { name: "gebackener Camenbert", price: 4.2, category: "essen" },
       { name: "Pommes", price: 2.5, category: "essen" },
       { name: "Salat", price: 4.0, category: "essen" },
-      { name: "Bratwurst mit Kraut", price: 8.5, category: "essen" },
       { name: "Alkoholfreies Bier", price: 3.6, category: "getraenke" },
+      { name: "Alkoholfreies Hefe", price: 3.6, category: "getraenke" }, 
+      { name: "Apfelschorle", price: 2.0, category: "getraenke" },
       { name: "Bier", price: 4.8, category: "getraenke" },
-      { name: "Alkoholfreies Hefe", price: 3.6, category: "getraenke" },
+      { name: "Cola", price: 3.0, category: "getraenke" },
+      { name: "Fanta", price: 3.0, category: "getraenke" },
       { name: "Hefeweizen", price: 3.8, category: "getraenke" },
       { name: "Radler", price: 3.6, category: "getraenke" },
       { name: "Spezi", price: 2.5, category: "getraenke" },
-      { name: "Apfelschorle", price: 2.0, category: "getraenke" },
-      { name: "Cola", price: 3.0, category: "getraenke" },
-      { name: "Fanta", price: 3.0, category: "getraenke" },
       { name: "Wasser spritzig", price: 2.0, category: "getraenke" },
       { name: "Wasser still", price: 2.0, category: "getraenke" }
     ];
@@ -265,17 +269,17 @@
         const totalProductPrice = item.price * item.quantity;
         totalSum += totalProductPrice;
 
-    const row = document.createElement("tr");
-row.innerHTML = `
-  <td>${item.name}</td>
-  <td>
-    <button onclick="updateQuantity('${item.name}', -1)">-</button>
-    ${item.quantity}
-    <button onclick="updateQuantity('${item.name}', 1)">+</button>
-  </td>
-  <td>${item.price.toFixed(2)}</td>
-  <td>${totalProductPrice.toFixed(2)}</td>
-`;
+        const row = document.createElement("tr");
+        row.innerHTML = `
+          <td>${item.name}</td>
+          <td>
+            <button onclick="updateQuantity('${item.name}', -1)">-</button>
+            ${item.quantity}
+            <button onclick="updateQuantity('${item.name}', 1)">+</button>
+          </td>
+          <td>${item.price.toFixed(2)}</td>
+          <td>${totalProductPrice.toFixed(2)}</td>
+        `;
         orderTableBody.appendChild(row);
       });
 
@@ -298,59 +302,66 @@ row.innerHTML = `
       renderOrder();
     }
 
-function handlePayment() {
-  const totalAmount = parseFloat(document.getElementById("totalSum").textContent);
+    function handlePayment() {
+      const totalAmount = parseFloat(document.getElementById("totalSum").textContent);
 
-  // Erstelle ein Eingabefeld für den Zahlungsbetrag
-  const paymentInput = document.createElement("input");
-  paymentInput.type = "number";
-  paymentInput.inputmode = "decimal"; // Aktiviert Nummernblock auf iPhone
-  paymentInput.placeholder = `Betrag eingeben (${totalAmount.toFixed(2)}€)`;
-  paymentInput.style.fontSize = "20px";
-  paymentInput.style.padding = "10px";
-  paymentInput.style.width = "100%";
+      // Erstelle ein Eingabefeld für den Zahlungsbetrag
+      const paymentInput = document.createElement("input");
+      paymentInput.type = "number";
+      paymentInput.inputmode = "decimal"; 
+      paymentInput.placeholder = `Betrag eingeben`;
+      paymentInput.style.fontSize = "20px";
+      paymentInput.style.padding = "10px";
+      paymentInput.style.width = "100%";
 
-  // Erstelle ein Dialogfenster
-  const paymentDialog = document.createElement("div");
-  paymentDialog.style.position = "fixed";
-  paymentDialog.style.top = "50%";
-  paymentDialog.style.left = "50%";
-  paymentDialog.style.transform = "translate(-50%, -50%)";
-  paymentDialog.style.background = "white";
-  paymentDialog.style.padding = "20px";
-  paymentDialog.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
-  paymentDialog.style.borderRadius = "8px";
-  paymentDialog.style.textAlign = "center";
+      // Preisanzeige in der zweiten Zeile
+      const priceDisplay = document.createElement("div");
+      priceDisplay.style.fontSize = "20px";
+      priceDisplay.style.marginTop = "10px";
+      priceDisplay.textContent = `Gesamtbetrag: ${totalAmount.toFixed(2)}€`;
 
-  // Bestätigungsbutton
-  const confirmButton = document.createElement("button");
-  confirmButton.textContent = "Bestätigen";
-  confirmButton.style.marginTop = "10px";
-  confirmButton.style.padding = "10px";
-  confirmButton.style.fontSize = "16px";
-  confirmButton.style.cursor = "pointer";
-  confirmButton.onclick = () => {
-    let paymentAmount = parseFloat(paymentInput.value);
+      // Erstelle ein Dialogfenster
+      const paymentDialog = document.createElement("div");
+      paymentDialog.style.position = "fixed";
+      paymentDialog.style.top = "50%";
+      paymentDialog.style.left = "50%";
+      paymentDialog.style.transform = "translate(-50%, -50%)";
+      paymentDialog.style.background = "white";
+      paymentDialog.style.padding = "20px";
+      paymentDialog.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
+      paymentDialog.style.borderRadius = "8px";
+      paymentDialog.style.textAlign = "center";
 
-    if (isNaN(paymentAmount) || paymentAmount < totalAmount) {
-      alert("Ungültiger Betrag oder nicht ausreichend.");
-    } else {
-      const change = paymentAmount - totalAmount;
-      alert(`Vielen Dank für Ihre Zahlung!\nWechselgeld: ${change.toFixed(2)}€`);
-      document.body.removeChild(paymentDialog);
+      // Bestätigungsbutton
+      const confirmButton = document.createElement("button");
+      confirmButton.textContent = "Bestätigen";
+      confirmButton.style.marginTop = "10px";
+      confirmButton.style.padding = "10px";
+      confirmButton.style.fontSize = "16px";
+      confirmButton.style.cursor = "pointer";
+      confirmButton.onclick = () => {
+        let paymentAmount = parseFloat(paymentInput.value);
+
+        if (isNaN(paymentAmount) || paymentAmount < totalAmount) {
+          alert("Ungültiger Betrag oder nicht ausreichend.");
+        } else {
+          const change = paymentAmount - totalAmount;
+          alert(`Vielen Dank für Ihre Zahlung!\nWechselgeld: ${change.toFixed(2)}€`);
+          document.body.removeChild(paymentDialog);
+        }
+      };
+
+      // Dialogfenster aufbauen
+      paymentDialog.appendChild(paymentInput);
+      paymentDialog.appendChild(priceDisplay);
+      paymentDialog.appendChild(confirmButton);
+
+      // Dialogfenster anzeigen
+      document.body.appendChild(paymentDialog);
+
+      // Fokus direkt auf das Eingabefeld setzen
+      paymentInput.focus();
     }
-  };
-
-  // Dialogfenster aufbauen
-  paymentDialog.appendChild(paymentInput);
-  paymentDialog.appendChild(confirmButton);
-
-  // Dialogfenster anzeigen
-  document.body.appendChild(paymentDialog);
-
-  // Fokus direkt auf das Eingabefeld setzen
-  paymentInput.focus();
-}
 
     function completeOrder() {
       alert("Bestellung abgeschlossen!");
