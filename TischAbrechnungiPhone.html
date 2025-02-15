@@ -294,18 +294,59 @@
       renderOrder();
     }
 
-    function handlePayment() {
-      const totalAmount = parseFloat(document.getElementById("totalSum").textContent);
-      let paymentAmount = prompt(`Betrag zu zahlen: ${totalAmount.toFixed(2)}€\nBitte geben Sie den Zahlbetrag ein:`);
-      paymentAmount = parseFloat(paymentAmount);
+function handlePayment() {
+  const totalAmount = parseFloat(document.getElementById("totalSum").textContent);
 
-      if (isNaN(paymentAmount) || paymentAmount < totalAmount) {
-        alert("Ungültiger Betrag oder nicht ausreichend.");
-      } else {
-        const change = paymentAmount - totalAmount;
-        alert(`Vielen Dank für Ihre Zahlung!\nWechselgeld: ${change.toFixed(2)}€`);
-      }
+  // Erstelle ein Eingabefeld für den Zahlungsbetrag
+  const paymentInput = document.createElement("input");
+  paymentInput.type = "number";
+  paymentInput.inputmode = "decimal"; // Aktiviert Nummernblock auf iPhone
+  paymentInput.placeholder = `Betrag eingeben (${totalAmount.toFixed(2)}€)`;
+  paymentInput.style.fontSize = "20px";
+  paymentInput.style.padding = "10px";
+  paymentInput.style.width = "100%";
+
+  // Erstelle ein Dialogfenster
+  const paymentDialog = document.createElement("div");
+  paymentDialog.style.position = "fixed";
+  paymentDialog.style.top = "50%";
+  paymentDialog.style.left = "50%";
+  paymentDialog.style.transform = "translate(-50%, -50%)";
+  paymentDialog.style.background = "white";
+  paymentDialog.style.padding = "20px";
+  paymentDialog.style.boxShadow = "0px 0px 10px rgba(0,0,0,0.2)";
+  paymentDialog.style.borderRadius = "8px";
+  paymentDialog.style.textAlign = "center";
+
+  // Bestätigungsbutton
+  const confirmButton = document.createElement("button");
+  confirmButton.textContent = "Bestätigen";
+  confirmButton.style.marginTop = "10px";
+  confirmButton.style.padding = "10px";
+  confirmButton.style.fontSize = "16px";
+  confirmButton.style.cursor = "pointer";
+  confirmButton.onclick = () => {
+    let paymentAmount = parseFloat(paymentInput.value);
+
+    if (isNaN(paymentAmount) || paymentAmount < totalAmount) {
+      alert("Ungültiger Betrag oder nicht ausreichend.");
+    } else {
+      const change = paymentAmount - totalAmount;
+      alert(`Vielen Dank für Ihre Zahlung!\nWechselgeld: ${change.toFixed(2)}€`);
+      document.body.removeChild(paymentDialog);
     }
+  };
+
+  // Dialogfenster aufbauen
+  paymentDialog.appendChild(paymentInput);
+  paymentDialog.appendChild(confirmButton);
+
+  // Dialogfenster anzeigen
+  document.body.appendChild(paymentDialog);
+
+  // Fokus direkt auf das Eingabefeld setzen
+  paymentInput.focus();
+}
 
     function completeOrder() {
       alert("Bestellung abgeschlossen!");
